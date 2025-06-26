@@ -1,0 +1,19 @@
+workflows:
+  build-android:
+    name: Build Android APK
+    max_build_duration: 30
+    environment:
+      flutter: stable
+      android_signing:
+        - keystore_reference
+      vars:
+        GOOGLE_SERVICES_JSON: Encrypted_Valor_Aqui
+    scripts:
+      - name: Criar google-services.json
+        script: echo $GOOGLE_SERVICES_JSON | base64 --decode > android/app/google-services.json
+      - name: Flutter pub get
+        script: flutter pub get
+      - name: Build APK
+        script: flutter build apk --release
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
