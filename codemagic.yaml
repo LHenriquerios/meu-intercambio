@@ -1,19 +1,27 @@
 workflows:
-  build-android:
-    name: Build Android APK
-    max_build_duration: 30
+  build_app:
+    name: Build Android & iOS
+    max_build_duration: 60
     environment:
       flutter: stable
-      android_signing:
-        - keystore_reference
+      xcode: latest
       vars:
-        GOOGLE_SERVICES_JSON: Encrypted_Valor_Aqui
+        FIREBASE_CONFIG: Encrypted(...) # substitua por sua variável no Codemagic
+    triggering:
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: true
     scripts:
-      - name: Criar google-services.json
-        script: echo $GOOGLE_SERVICES_JSON | base64 --decode > android/app/google-services.json
-      - name: Flutter pub get
+      - name: Set up Firebase config
+        script: |
+          echo $FIREBASE_CONFIG | base64 --decode > android/app/google-services.json
+      - name: Get Flutter dependencies
         script: flutter pub get
-      - name: Build APK
+      - name: Build Android APK
         script: flutter build apk --release
+      - name: Build iOS app
+        script: flutter build ios --release --no-codesign
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
+      - build/ios/iphoneos/*.app
