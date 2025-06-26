@@ -1,28 +1,25 @@
-workflows:
-  build_app:
-    name: Build Android & iOS
-    max_build_duration: 60
-    environment:
-      flutter: stable
-      xcode: latest
-      # A variável agora é lida da UI do Codemagic, não declarada aqui.
-    triggering:
-      branch_patterns:
-        - pattern: main
-          include: true
-          source: true
-    scripts:
+scripts:
       - name: Set up Firebase config
-        script: |
-          # Este script agora é mais simples e robusto.
-          # Ele pega a variável de ambiente GOOGLE_SERVICES_JSON e a salva no local correto.
+        script: | 
+          echo "INFO: Starting Firebase configuration..."
+          
+          # 1. Create the google-services.json file from the environment variable
           echo $GOOGLE_SERVICES_JSON > android/app/google-services.json
+          
+          echo "INFO: File creation command executed. Verifying..."
+          
+          # 2. Verify if the file exists and list directory contents
+          echo "Listing contents of android/app/:"
+          ls -l android/app/
+          
+          # 3. Print the content of the created file to the log to ensure it's not empty
+          echo "Content of created google-services.json:"
+          cat android/app/google-services.json
+          
+          echo "INFO: Firebase configuration finished."
       - name: Get Flutter dependencies
         script: flutter pub get
       - name: Build Android APK
         script: flutter build apk --release
       - name: Build iOS app
         script: flutter build ios --release --no-codesign
-    artifacts:
-      - build/app/outputs/flutter-apk/app-release.apk
-      - build/ios/iphoneos/*.app
