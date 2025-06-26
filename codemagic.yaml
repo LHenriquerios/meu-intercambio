@@ -5,8 +5,6 @@ workflows:
     environment:
       flutter: stable
       xcode: latest
-      vars:
-        FIREBASE_CONFIG: Encrypted(...) # substitua por sua variável no Codemagic
     triggering:
       branch_patterns:
         - pattern: main
