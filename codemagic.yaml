@@ -2,25 +2,25 @@ workflows:
   android-workflow:
     name: Android Build
     environment:
-      groups:
-        - firebase_group  # Grupo com a variável GOOGLE_SERVICES_JSON
+      vars:  # Usa variáveis diretamente (não grupos)
+        GOOGLE_SERVICES_JSON: $GOOGLE_SERVICES_JSON  # Referencia a variável que você criou
     scripts:
-      - name: Setup Firebase Configuration
+      - name: Create google-services.json
         script: |
-          # Cria o arquivo google-services.json
+          # Garante que o diretório existe
+          mkdir -p android/app/src/debug
+          
+          # Salva o JSON nos dois locais que o Gradle procura
+          echo "$GOOGLE_SERVICES_JSON" > android/app/src/debug/google-services.json
           echo "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
           
-          # Verifica se o arquivo foi criado corretamente
-          echo "Verificando arquivo google-services.json:"
-          ls -la android/app/google-services.json
-          echo "Conteúdo (primeiras linhas):"
-          head -n 5 android/app/google-services.json
-          
-      - name: Get Flutter dependencies
-        script: flutter pub get
-          
-      - name: Build Android APK
-        script: flutter build apk --release
-          
-      - name: Build iOS app
-        script: flutter build ios --release --no-codesign
+          # Verifica se os arquivos foram criados
+          echo "Conteúdo de android/app/src/debug/google-services.json:"
+          cat android/app/src/debug/google-services.json
+          echo "Conteúdo de android/app/google-services.json:"
+          cat android/app/google-services.json
+
+      - name: Build Android
+        script: |
+          flutter pub get
+          flutter build apk --debug
