@@ -1,25 +1,26 @@
-scripts:
-      - name: Set up Firebase config
-        script: | 
-          echo "INFO: Starting Firebase configuration..."
+workflows:
+  android-workflow:
+    name: Android Build
+    environment:
+      groups:
+        - firebase_group  # Grupo com a variável GOOGLE_SERVICES_JSON
+    scripts:
+      - name: Setup Firebase Configuration
+        script: |
+          # Cria o arquivo google-services.json
+          echo "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
           
-          # 1. Create the google-services.json file from the environment variable
-          echo $GOOGLE_SERVICES_JSON > android/app/google-services.json
+          # Verifica se o arquivo foi criado corretamente
+          echo "Verificando arquivo google-services.json:"
+          ls -la android/app/google-services.json
+          echo "Conteúdo (primeiras linhas):"
+          head -n 5 android/app/google-services.json
           
-          echo "INFO: File creation command executed. Verifying..."
-          
-          # 2. Verify if the file exists and list directory contents
-          echo "Listing contents of android/app/:"
-          ls -l android/app/
-          
-          # 3. Print the content of the created file to the log to ensure it's not empty
-          echo "Content of created google-services.json:"
-          cat android/app/google-services.json
-          
-          echo "INFO: Firebase configuration finished."
       - name: Get Flutter dependencies
         script: flutter pub get
+          
       - name: Build Android APK
         script: flutter build apk --release
+          
       - name: Build iOS app
         script: flutter build ios --release --no-codesign
