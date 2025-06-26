@@ -5,9 +5,7 @@ workflows:
     environment:
       flutter: stable
       xcode: latest
-      vars:
-        FIREBASE_CONFIG: |
-          ewogICJwcm9qZWN0X2luZm8iOiB7CiAgICAicHJvamVjdF9udW1iZXIiOiAiNjMzMTUyNzM2MjI1IiwKICAgICJwcm9qZWN0X2lkIjogIm1ldS1pbnRlcmNhbWJpby1hcHAiLAogICAgInN0b3JhZ2VfYnVja2V0IjogIm1ldS1pbnRlcmNhbWJpby1hcHAuZmlyZWJhc2VzdG9yYWdlLmFwcCIKICB9LAogICJjbGllbnQiOiBbCiAgICB7CiAgICAgICJjbGllbnRfaW5mbyI6IHsKICAgICAgICAibW9iaWxlc2RrX2FwcF9pZCI6ICIxOjYzMzE1MjczNjIyNTphbmRyb2lkOmM1ZmRkOTc5ZjcyOTU0M2E4ODYwYTAiLAogICAgICAgICJhbmRyb2lkX2NsaWVudF9pbmZvIjogewogICAgICAgICAgInBhY2thZ2VfbmFtZSI6ICJjb20uZXhhbXBsZS5tZXVfaW50ZXJjYW1iaW9fcHJvdG90eXBlIgogICAgICAgIH0KICAgICAgfSwKICAgICAgIm9hdXRoX2NsaWVudCI6IFtdLAogICAgICAiYXBpX2tleSI6IFsKICAgICAgICB7CiAgICAgICAgICAiY3VycmVudF9rZXkiOiAiQUl6YVN5RGJaVTBMT0h5MzlCcWhZRTdxNWJveHBSWHlBVDZxNVljIgogICAgICAgIH0KICAgICAgXSwKICAgICAgInNlcnZpY2VzIjogewogICAgICAgICJhcHBpbnZpdGVfc2VydmljZSI6IHsKICAgICAgICAgICJvdGhlcl9wbGF0Zm9ybV9vYXV0aF9jbGllbnQiOiBbXQogICAgICAgIH0KICAgICAgfQogICAgfQogIF0sCiAgImNvbmZpZ3VyYXRpb25fdmVyc2lvbiI6ICIxIgp9
+      # A variável agora é lida da UI do Codemagic, não declarada aqui.
     triggering:
       branch_patterns:
         - pattern: main
@@ -16,7 +14,9 @@ workflows:
     scripts:
       - name: Set up Firebase config
         script: |
-          echo "$FIREBASE_CONFIG" | base64 --decode > android/app/google-services.json
+          # Este script agora é mais simples e robusto.
+          # Ele pega a variável de ambiente GOOGLE_SERVICES_JSON e a salva no local correto.
+          echo $GOOGLE_SERVICES_JSON > android/app/google-services.json
       - name: Get Flutter dependencies
         script: flutter pub get
       - name: Build Android APK
